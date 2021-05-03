@@ -28,8 +28,9 @@ source-repository head
 library
   exposed-modules:
       Analyze.Simple
-    , Example.Simple
     , Common
+    , Evaluate.Simple
+    , Example.Simple
       Types
   other-modules:
       Paths_cba

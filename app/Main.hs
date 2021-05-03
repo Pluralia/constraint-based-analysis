@@ -8,6 +8,7 @@ import           Text.Read
 import           Debug.Trace
 
 import           Analyze.Simple
+import           Evaluate.Simple
 import           Common
 import           Example.Simple
 import           Types
@@ -34,6 +35,11 @@ handleInput :: Exp -> IO ()
 handleInput exp = do
   let res = analyzeDArray exp
   mapM_ print . Map.toList $ res
+  print "---------------------------------------------"
+  let checkRes = evaluateDArray exp
+  mapM_ print . Map.toList $ res
+  print "---------------------------------------------"
+  print $ res == checkRes
 
 ----------------------------------------------------------------------------------------------------
 
