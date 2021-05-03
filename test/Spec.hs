@@ -21,11 +21,17 @@ main = do
       it "2 id application" $ do
         go Simple.twoIdApp
 
+      it "sequential application" $ do
+        go Simple.seqApp
+
       it "2 lambdas for 1 variable" $ do
         go Simple.oneVarTwoLam
 
       it "CBA0 fails <-- fails by `Evaluate.Simple.evaluateDArray`" $ do
         analyzeDArray Simple.contextDep `shouldBe` expectedByContextDep 
+
+      it "not nf argument which is not used" $ do
+        go Simple.unusedNotNfArg
 
 ----------------------------------------------------------------------------------------------------
 

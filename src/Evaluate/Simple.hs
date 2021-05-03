@@ -56,7 +56,7 @@ reduceAndUpd term predarr =
     reduceOnceAndUpd (App lab (Lam _ (Abst x t)) rterm) predarr =
       (Just $ subst x rterm t,
          insertNode (R x)   (Left . C . label $ rterm)
-       . insertNode (C lab) (Left . C . label $ t)     $ predarr)
+       . insertNode (C lab) (Left . C . label $ t)     $ reduceAndUpd rterm predarr)
 
     reduceOnceAndUpd term@(App {..})                    predarr =
       let lres@(lmaybeTerm, _) = reduceOnceAndUpd lterm predarr
@@ -85,8 +85,11 @@ insertNode node value map =
 
 ----------------------------------------------------------------------------------------------------
 
-evaluate :: Term -> Term
-evaluate term = maybe term evaluate (reduceOnce term)
+evaluate :: Exp -> Term
+evaluate = go . makeLabel
+  where
+    go :: Term -> Term
+    go term = maybe term go (reduceOnce term)
 
 reduceOnce :: Term -> Maybe Term
 reduceOnce (App _ (Lam _ (Abst x t)) s) = Just $ subst x s t
