@@ -33,6 +33,9 @@ main = do
       it "not nf argument which is not used" $ do
         go Simple.unusedNotNfArg
 
+      it "infinite evaluation" $ do
+        go Simple.y_comb
+
 ----------------------------------------------------------------------------------------------------
 
 go :: Exp -> Expectation

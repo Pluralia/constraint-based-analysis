@@ -33,7 +33,7 @@ toDArray = Map.map go
 
 
 shareVars :: PreDArray -> PreDArray
-shareVars predarr = if predarr == updPredarr then predarr else shareVars updPredarr
+shareVars predarr = preDArrayFixPoint predarr updPredarr shareVars
   where
     updPredarr = Map.foldrWithKey handleData Map.empty predarr
 
@@ -50,7 +50,7 @@ shareVars predarr = if predarr == updPredarr then predarr else shareVars updPred
 reduceAndUpd :: Term -> PreDArray -> PreDArray
 reduceAndUpd term predarr =
   let (maybeTerm, updPredarr) = reduceOnceAndUpd term predarr
-   in maybe updPredarr (flip reduceAndUpd updPredarr) maybeTerm
+   in maybe updPredarr (preDArrayFixPoint predarr updPredarr . reduceAndUpd) maybeTerm
   where
     reduceOnceAndUpd :: Term -> PreDArray -> (Maybe Term, PreDArray)
     reduceOnceAndUpd (App lab (Lam _ (Abst x t)) rterm) predarr =
@@ -76,6 +76,10 @@ initPreDArray (Var {..})                = insertNode (C label) (Left $ R name)
 initPreDArray term@(Lam lab (Abst _ t)) = insertNode (C lab) (Right term) . initPreDArray t
 initPreDArray (App {..})                = initPreDArray lterm . initPreDArray rterm
 
+
+preDArrayFixPoint :: PreDArray -> PreDArray -> (PreDArray -> PreDArray) -> PreDArray
+preDArrayFixPoint predarr updPredarr func =
+  if predarr == updPredarr then predarr else func updPredarr
 
 insertNode :: (Ord a) => Node -> a -> Map.Map Node (Set.Set a) -> Map.Map Node (Set.Set a)
 insertNode node value map =
